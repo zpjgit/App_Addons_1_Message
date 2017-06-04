@@ -11,6 +11,30 @@ public class MainActivity extends AppCompatActivity {
     private Button mButton = null;
     private static final String TAG = "MessageTest";
     private int ButtonCount = 0;
+    private Thread myThread;
+
+    class MyRunnable implements Runnable {
+//        long minPrime;
+//        MyRunnable(long minPrime) {
+//            this.minPrime = minPrime;
+//        }
+
+        public void run() {
+            // compute primes larger than minPrime
+            int count = 0;
+            for (;;)
+            {
+                Log.d(TAG, "MyThread "+count);
+                count++;
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
                 ButtonCount++;
             }
         });
+
+        myThread = new Thread(new MyRunnable(), "MessageTestThread");/* 线程; 线程名 */
+        myThread.start(); /*启动线程*/
 
     }
 }
