@@ -1,5 +1,8 @@
 package com.zpj.app_addons_1_message;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +16,8 @@ public class MainActivity extends AppCompatActivity {
     private int ButtonCount = 0;
     private Thread myThread;
     private MyThread myThread2;
+    private Handler mHandler;
+    private int mMessageCount = 0;
 
     class MyRunnable implements Runnable {
 //        long minPrime;
@@ -40,17 +45,12 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void run() {/*复写run方法*/
             super.run();
-            int count = 0;
-            for (;;)
-            {
-                Log.d(TAG, "MyThread2 "+count);
-                count++;
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            Looper.prepare(); /*给子线程添加消息处理机制 Looper.java里*/
+            Looper.loop();
+        }
+
+        public Looper getLooper() {
+            return Looper.myLooper();
         }
     }
 
@@ -65,6 +65,9 @@ public class MainActivity extends AppCompatActivity {
                 // Perform action on click
                 Log.d(TAG, "Send Message "+ ButtonCount);
                 ButtonCount++;
+
+                Message msg= new Message();/*这里发消息*/
+                mHandler.sendMessage(msg);
             }
         });
 
@@ -74,5 +77,16 @@ public class MainActivity extends AppCompatActivity {
 
         myThread2 = new MyThread();
         myThread2.start();
+
+        /**/
+        /*消息发给线程2里的Looper, 当这个线程收到消息时会调用这个handleMessage来处理*/
+        mHandler = new Handler(myThread2.getLooper(), new Handler.Callback(){
+            @Override
+            public boolean handleMessage(Message msg) {/*这里处理*/
+                Log.d(TAG, "get Message "+ mMessageCount);
+                mMessageCount++;
+                return false;
+            }
+        });
     }
 }
