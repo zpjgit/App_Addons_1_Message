@@ -18,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     private MyThread myThread2;
     private Handler mHandler;
     private int mMessageCount = 0;
+//    private Looper mLooper;
 
     class MyRunnable implements Runnable {
 //        long minPrime;
@@ -42,10 +43,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     class MyThread extends Thread {/*创建一个新线程*/
+        private Looper mLooper;
         @Override
         public void run() {/*复写run方法*/
             super.run();
             Looper.prepare(); /*给子线程添加消息处理机制 Looper.java里*/
+            /*---------------------------------------------*/
+//            mLooper = Looper.myLooper();
+            synchronized (this) {
+                mLooper = Looper.myLooper();/*mLooper在这里赋值*/
+                notifyAll();/*唤醒进程*/
+            }
+            /*---------------------------------------------*/
             Looper.loop();
         }
 
