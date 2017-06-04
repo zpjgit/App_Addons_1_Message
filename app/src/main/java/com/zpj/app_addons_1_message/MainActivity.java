@@ -12,6 +12,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MessageTest";
     private int ButtonCount = 0;
     private Thread myThread;
+    private MyThread myThread2;
 
     class MyRunnable implements Runnable {
 //        long minPrime;
@@ -27,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "MyThread "+count);
                 count++;
                 try {
-                    Thread.sleep(3000);
+                    Thread.sleep(3000);/*休眠3000毫秒 免得让系统卡死*/
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -35,6 +36,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    class MyThread extends Thread {/*创建一个新线程*/
+        @Override
+        public void run() {/*复写run方法*/
+            super.run();
+            int count = 0;
+            for (;;)
+            {
+                Log.d(TAG, "MyThread2 "+count);
+                count++;
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +68,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        /*实例化线程*/
         myThread = new Thread(new MyRunnable(), "MessageTestThread");/* 线程; 线程名 */
         myThread.start(); /*启动线程*/
 
+        myThread2 = new MyThread();
+        myThread2.start();
     }
 }
